@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AIRE – From Scattered Data to Verified Disclosure</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--side:#0C3A2D;--side2:#134D3B;--brand:#1F7A5C;--brand-soft:#E3F2EB;--ink:#12221B;--mut:#5C6D64;--line:#E1E8E4;--bg:#F1F5F3;--card:#fff;--amber:#B86A00;--amber-bg:#FFF1DA;--green:#1F7A5C;--green-bg:#E3F2EB;--blue:#2B5C9E;--blue-bg:#E4EDF8;--red:#B3342A;--slate:#5C6D64;--slate-bg:#EAEFEC;--r:14px;--hd:"Bricolage Grotesque","Segoe UI",sans-serif;--bd:"Figtree","Segoe UI",Arial,sans-serif}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0D1512;--card:#15211C;--ink:#E7F0EA;--mut:#92A59B;--line:#25342D;--brand-soft:#173A2D;--amber-bg:#3A2A0C;--green-bg:#133528;--blue-bg:#16294A;--slate-bg:#202D27;--amber:#F0A53A;--green:#4CC594;--blue:#7DB0F0;--red:#F27B70;--slate:#92A59B}}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{font:14.5px/1.5 var(--bd);color:var(--ink);background:var(--bg);min-height:100vh}
+button,input{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--hd);letter-spacing:-.01em}
+[hidden]{display:none!important}
+/* login */
+#login{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
+.hero{background:linear-gradient(155deg,var(--side) 30%,#1B6B50);color:#fff;padding:56px;display:flex;flex-direction:column;justify-content:space-between;gap:32px}
+.logo{font:800 30px var(--hd);display:flex;align-items:center;gap:10px}
+.logo i{width:32px;height:32px;border-radius:9px;background:#5FD3A4;display:grid;place-items:center;color:var(--side);font:800 17px var(--hd);font-style:normal}
+.hero h2{font-size:clamp(30px,3.6vw,46px);line-height:1.08;max-width:15ch;font-weight:800}
+.hero p{color:#B9D9CA;max-width:44ch;margin-top:14px}
+.chain{display:flex;flex-direction:column;gap:0}
+.chain div{display:flex;gap:14px;align-items:center;padding:9px 0;position:relative;font-weight:600}
+.chain div::before{content:"";width:14px;height:14px;border-radius:50%;background:#5FD3A4;box-shadow:0 0 0 4px rgba(95,211,164,.2);flex:none;z-index:1}
+.chain div:not(:last-child)::after{content:"";position:absolute;left:6px;top:28px;bottom:-8px;width:2px;background:rgba(95,211,164,.4)}
+.chain small{display:block;font-weight:400;color:#9CC5B3;font-size:12.5px}
+.formwrap{display:grid;place-items:center;padding:32px}
+.form{width:100%;max-width:380px}
+.form h1{font-size:30px;font-weight:800}
+.form .sub{color:var(--mut);margin:6px 0 22px}
+.lab{display:block;font-weight:600;font-size:13px;margin:14px 0 6px}
+.in{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.in:focus,.btn:focus-visible,.nav:focus-visible,.chip:focus-visible{outline:3px solid #5FD3A4;outline-offset:1px}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 11px;text-align:left;cursor:pointer;font-weight:600;font-size:13px}
+.chip.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+.go{width:100%;margin-top:22px;padding:13px;font-size:15px}
+.hint{font-size:12.5px;color:var(--mut);margin-top:16px}
+/* app */
+#app{display:grid;grid-template-columns:262px 1fr;min-height:100vh}
+.side{background:var(--side);color:#fff;padding:20px 14px;position:sticky;top:0;height:100vh;overflow:auto;display:flex;flex-direction:column;gap:2px}
+.side .logo{font-size:24px;padding:2px 10px 18px}.side .logo i{width:28px;height:28px;font-size:15px}
+.grp{font-size:12px;color:#7FB09B;padding:16px 12px 5px;font-weight:600}
+.nav{display:block;width:100%;text-align:left;background:0;border:0;color:#CFE4DA;padding:9px 12px;border-radius:9px;cursor:pointer;position:relative}
+.nav:hover{background:rgba(255,255,255,.07)}
+.nav.on{background:var(--side2);color:#fff;font-weight:600}
+.nav.on::before{content:"";position:absolute;left:-14px;top:8px;bottom:8px;width:4px;border-radius:0 4px 4px 0;background:#5FD3A4}
+.nav .new{font-size:11px;background:#5FD3A4;color:var(--side);border-radius:99px;padding:1px 7px;margin-left:6px;font-weight:700}
+.sfoot{margin-top:auto;padding:12px;font-size:12.5px;color:#8FBBA8}
+.main{min-width:0}
+.top{display:flex;align-items:center;gap:14px;padding:18px 30px;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:5}
+.top h1{font-size:23px;font-weight:700}.top .s{color:var(--mut);font-size:13px}
+.top .sp{flex:1}.burger{display:none}
+.per{font-size:13px;color:var(--mut);background:var(--slate-bg);padding:5px 12px;border-radius:99px}
+.av{width:36px;height:36px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700;cursor:pointer;border:0}
+.page{padding:26px 30px 48px;max-width:1280px}
+.page.wide{max-width:none}
+.grid{display:grid;gap:18px}.c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:repeat(3,1fr)}.c4{grid-template-columns:repeat(4,1fr)}.cm{grid-template-columns:1.15fr 1fr}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;min-width:0}
+.card h2{font-size:17px;margin-bottom:12px}.card h3{font-size:13.5px;color:var(--mut);font-weight:600;font-family:var(--bd);margin-bottom:8px}
+.note{font-size:12.5px;color:var(--mut);margin-top:12px}
+.kpi b{display:block;font:800 34px/1.05 var(--hd);margin:2px 0 4px}.kpi span{font-size:12.5px;color:var(--mut)}
+.kpi.hot{background:var(--amber-bg);border-color:var(--amber)}.kpi.hot b{color:var(--amber)}
+.kpi.ok b{color:var(--green)}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:480px}
+th{text-align:left;font-size:12.5px;color:var(--mut);font-weight:600;padding:9px 10px;border-bottom:2px solid var(--line);white-space:nowrap}
+td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.hl td{background:var(--amber-bg)}tr.cl{cursor:pointer}tr.cl:hover td{background:var(--brand-soft)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 11px;border-radius:99px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.pa{background:var(--amber-bg);color:var(--amber)}.pg{background:var(--green-bg);color:var(--green)}.pb{background:var(--blue-bg);color:var(--blue)}.ps{background:var(--slate-bg);color:var(--slate)}
+.btn{border:0;background:var(--brand);color:#fff;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;margin:8px 8px 0 0}
+.btn.gh{background:transparent;color:var(--brand);border:1px solid var(--brand)}.btn.gh.on{background:var(--brand);color:#fff}
+.btn:hover{filter:brightness(1.08)}
+.task{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.task:last-child{border:0}.task small{display:block;color:var(--mut);font-size:12.5px}
+.flag{border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;background:var(--card);margin-bottom:14px}
+.flag.hot{border:2px solid var(--amber);background:var(--amber-bg)}
+.flag .v{font:700 22px var(--hd);color:var(--amber);margin:2px 0}
+.tag{font-size:12px;background:var(--slate-bg);color:var(--mut);padding:1px 8px;border-radius:6px;margin-left:6px}
+.tl{position:relative;margin-top:16px}.tl::before{content:"";position:absolute;left:9px;top:8px;bottom:14px;width:3px;background:var(--line)}
+.st{position:relative;padding:0 0 18px 38px}.st i{position:absolute;left:0;top:2px;width:21px;height:21px;border-radius:50%;background:var(--green);border:4px solid var(--card);box-shadow:0 0 0 1px var(--line)}
+.st.e i{background:var(--blue)}.st b{display:block}.st span{font-size:12.5px;color:var(--mut)}
+.row{display:flex;align-items:center;gap:12px;margin:10px 0;font-size:13px}.row .l{width:130px;color:var(--mut)}.row .t{flex:1;height:10px;background:var(--slate-bg);border-radius:6px;overflow:hidden}.row .t i{display:block;height:100%;border-radius:6px}.row .v{width:64px;text-align:right;font-weight:700}
+.pipe{display:grid;grid-template-columns:repeat(5,1fr);gap:0}
+.pipe div{padding:12px 10px 0;position:relative;font-size:13px;font-weight:600}
+.pipe div::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:var(--green);border-radius:3px;margin-right:3px}
+.pipe div.w::before{background:var(--amber)}.pipe small{display:block;font-weight:400;color:var(--mut)}
+.ringw{display:flex;align-items:center;gap:20px}.ring{flex:none}
+.rep-hd{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:20px}
+.rep-hd h2{font-size:clamp(24px,2.6vw,36px);font-weight:800}.rep-hd p{color:var(--mut)}
+.legend{display:flex;gap:16px;font-size:12.5px;color:var(--mut);margin-top:8px}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--side);color:#fff;padding:11px 18px;border-radius:12px;font-size:13.5px;z-index:20;max-width:90vw}
+.lk{background:var(--brand-soft);color:var(--brand);border:1px dashed var(--brand);border-radius:8px;padding:2px 10px;font-weight:700;cursor:pointer;font-variant-numeric:tabular-nums}.lk:hover{background:var(--brand);color:#fff}.lk::after{content:" ⌕"}
+.kpi.tr{cursor:pointer}.kpi.tr:hover{border-color:var(--brand)}.kpi .hint2{display:block;margin-top:8px;font-size:12px;color:var(--brand);font-weight:600}
+.btn:disabled,.chip:disabled,.in:disabled{opacity:.45;cursor:not-allowed}.ro{background:var(--blue-bg);color:var(--blue);padding:8px 12px;border-radius:10px;font-size:13px;margin-bottom:12px}
+.ov{position:fixed;inset:0;background:rgba(5,20,14,.5);z-index:40}
+.dr{position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);background:var(--card);z-index:41;padding:calc(24px + env(safe-area-inset-top,0px)) 24px 24px;overflow:auto;box-shadow:-12px 0 40px rgba(0,0,0,.25);animation:sl .2s}
+@keyframes sl{from{transform:translateX(40px);opacity:0}}@media(prefers-reduced-motion:reduce){.dr{animation:none}}
+.dr .x{float:right;background:0;border:1px solid var(--line);border-radius:9px;padding:4px 10px;cursor:pointer}
+.dr .big{font:800 36px var(--hd);color:var(--brand);margin:4px 0 10px}
+.dr .st b{font-size:13px;color:var(--brand)}.dr .st span{font-size:13.5px;color:var(--ink)}
+@media(min-width:1500px){.rep .c4{grid-template-columns:repeat(4,1fr)}.rep .c3w{grid-template-columns:1.3fr 1fr 1fr}}
+@media(max-width:1100px){.c4{grid-template-columns:1fr 1fr}.c3{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){#login{grid-template-columns:1fr}.hero{padding:32px}.chain{display:none}
+#app{grid-template-columns:1fr}.side{position:fixed;z-index:30;width:270px;left:0;transform:translateX(-100%);transition:transform .2s;padding-top:calc(20px + env(safe-area-inset-top,0px))}.side.open{transform:none}
+.burger{display:block;background:0;border:1px solid var(--line);border-radius:9px;padding:6px 10px;cursor:pointer}.top{padding:12px 16px;top:env(safe-area-inset-top,0px)}.page{padding:18px 16px 40px}.per{display:none}
+.c2,.c3,.cm,.c3w{grid-template-columns:1fr!important}.pipe{grid-template-columns:1fr 1fr}}
+@media print{.side,.top,.rep-hd .btn,.burger{display:none!important}#app{display:block}.page{padding:0}body{background:#fff}.card{break-inside:avoid}}
+</style></head><body>
+<div id="login"></div>
+<div id="app" hidden><aside class="side" id="side"></aside><div class="main">
+<header class="top"><button class="burger" id="bg" aria-label="Buka menu">☰</button><div><h1 id="ttl"></h1><div class="s" id="sub"></div></div><div class="sp"></div><span class="per">Periode Q3 2026</span><button class="av" id="av" title="Keluar" aria-label="Keluar"></button></header>
+<main id="pg"></main></div></div>
+<div class="toast" id="toast" hidden></div>
+<script>
+const D={
+roles:[["Tim keberlanjutan","TK"],["Keuangan & akuntansi","KA"],["Operasional","OP"],["Audit / assurance","AU"]],
+steps:[["Environmental Data Input","Energi, bahan bakar, air, limbah"],["AI-Assisted Data Integration","Konsolidasi dan penandaan anomali"],["Environmental Accounting & Measurement","Indikator fisik dan biaya"],["Human Verification & Validation","Keputusan akuntan dan auditor"],["Sustainability Reporting Output","Data point yang dapat ditelusuri"]],
+menu:[["Utama",[["beranda","Beranda","Ringkasan kualitas data dan pekerjaan Anda"],["rekon","Rekonsiliasi","Membandingkan utilitas, AIS, dan sistem produksi"],["flag","Flag & verifikasi","Selisih yang perlu keputusan manusia"],["tugas","Tugas & umpan balik","Koreksi yang dikembalikan ke unit sumber"],["trace","Traceability trail","Asal setiap angka, dari meter sampai laporan"]]],
+["Laporan",[["lapor","Laporan layar lebar","Ringkasan eksekutif untuk rapat dan presentasi",1],["emisi","Emisi & biaya","Scope 1 dan 2, intensitas, dan biaya lingkungan"],["pspk","Pemetaan PSPK","Kelengkapan empat unsur pengungkapan"],["indikator","Indikator dampak","Operasional, akuntansi, pelaporan, dan strategis"],["banding","Perbandingan paralel","Proses lama dan AIRE"]]],
+["Tata kelola",[["sumber","Sumber data","Koneksi ke sistem perusahaan"],["ai","Transparansi AI","Alasan flag dan pengawasan manusia"],["audit","Jejak audit","Setiap koreksi dan keputusan tercatat"],["akses","Peran & akses","Siapa boleh melihat dan mengubah apa"]]]],
+rekon:[["Konsumsi listrik (kWh)","1.200.000","1.020.000","—","180.000 (15%)","Perlu verifikasi","a"],["Konsumsi solar (liter)","—","80.000","80.000","0 (0%)","Sesuai","g"]],
+flags:[["F-01","Selisih konsumsi listrik","180.000 kWh (15%)","Perlu verifikasi","a","Nilai utilitas dan AIS berbeda lebih dari ambang 5%. Kemungkinan tagihan satu pabrik belum diinput."],["F-02","Tagihan ganda","","Selesai","g","Dua tagihan dengan nomor dan periode yang sama."],["F-03","Periode tidak sesuai","","Menunggu","s","Tanggal tagihan berada di luar periode pelaporan."]],
+tugas:[["Verifikasi selisih listrik","Keuangan & akuntansi","Tenggat 25 Nov 2026","Menunggu","a"],["Tinjau faktor emisi solar","Tim keberlanjutan","Tenggat 27 Nov 2026","Dikerjakan","b"],["Input tagihan pabrik 2 ke AIS","Operasional","Umpan balik ke unit sumber","Dikoreksi","g"]],
+trace:[["Meter utilitas","1.200.000 kWh, sumber: catatan utilitas"],["AIS: tagihan","Dikoreksi dari 1.020.000 menjadi 1.200.000 kWh"],["Faktor emisi 0,8","kgCO₂e per kWh, ilustratif, perlu rujukan resmi"],["Diverifikasi","Oleh akuntan, 19 Nov 2026"],["Laporan keberlanjutan","Hasil akhir: 960 tCO₂e"]],
+emisi:[["Konsumsi listrik (kWh)","1.020.000","1.200.000"],["Emisi listrik, Scope 2 (tCO₂e)","816","960"],["Konsumsi solar (liter)","80.000","80.000"],["Emisi solar, Scope 1 (tCO₂e)","216","216"],["Total emisi Scope 1 dan 2 (tCO₂e)","1.032","1.176",1],["Intensitas (kgCO₂e per ton produk)","25,8","29,4"]],
+pspk:[["Tata kelola","Pembagian tanggung jawab dan tahap verifikasi yang terdokumentasi","Sebagian","a",50],["Strategi","Data terintegrasi sebagai dasar penetapan target emisi","Belum","s",10],["Manajemen risiko","Deteksi anomali sebagai peringatan dini risiko informasi","Sebagian","a",55],["Metrik dan target","Emisi Scope 1 dan 2, intensitas, dan biaya lingkungan dengan jejak audit","Siap","g",90]],
+ind:[["Operasional",[["Waktu rekonsiliasi per periode","3 hari"],["Pengumpulan data manual berulang","12 kali per bulan"]]],["Akuntansi",[["Data point dengan jejak audit lengkap","86%"],["Selisih data awal dan terverifikasi","144 tCO₂e"],["Anomali terdeteksi dan terselesaikan","2 dari 3"]]],["Pelaporan",[["Unsur PSPK yang siap disajikan","1 dari 4"],["Waktu penyusunan laporan","6 hari"]]],["Strategis",[["Data terverifikasi dipakai untuk target","Belum diukur"]]]],
+sumber:[["AIS (sistem akuntansi)","Terhubung","g","19 Nov 2026, 08.00"],["ERP","Terhubung","g","19 Nov 2026, 08.00"],["Sistem produksi","Terhubung","g","18 Nov 2026, 22.00"],["Catatan utilitas","Sebagian","a","Input manual, 17 Nov 2026"],["Data pemasok","Fase 2","s","Belum dihubungkan"]],
+audit:[["19 Nov 2026, 08.00","Sistem","Flag F-01 dibuat","Selisih listrik 180.000 kWh"],["19 Nov 2026, 08.40","Akuntan","Memeriksa sumber","Catatan utilitas dan AIS"],["19 Nov 2026, 09.15","Akuntan","Koreksi dicatat","Tagihan pabrik 2 ditambahkan ke AIS"],["19 Nov 2026, 09.20","Operasional","Umpan balik diterima","Pencatatan di unit sumber diperbaiki"]],
+rl:["Beranda","Rekonsiliasi","Flag","Tugas","Emisi","PSPK","Jejak audit"],
+ak:[["Operasional","✓–✎✎––✓"],["Keuangan & akuntansi","✓✓✎✎✎–✓"],["Tim keberlanjutan","✓✓✓✓✓✎✓"],["Audit / assurance","✓✓✓✓✓✓✓"]]};
+const TR={
+kwh:{t:"Konsumsi listrik",v:"1.200.000 kWh",s:[["Sumber data","Catatan utilitas (2 pabrik) dan AIS"],["Waktu pengumpulan","Q3 2026, sinkronisasi terakhir 19 Nov 2026, 08.00"],["Transformasi","Tagihan pabrik 2 belum diinput di AIS (1.020.000 kWh). Dikoreksi menjadi 1.200.000 kWh"],["Metode pengukuran","Meter utilitas. Selisih 15% melewati ambang 5% sehingga muncul flag F-01"],["Verifikasi","Akuntan, 19 Nov 2026, 09.15. Koreksi tercatat di jejak audit"]],r:["e2"]},
+e2:{t:"Emisi listrik, Scope 2",v:"960 tCO₂e",s:[["Sumber data","Konsumsi listrik 1.200.000 kWh (terverifikasi)"],["Waktu pengumpulan","Dihitung 19 Nov 2026, setelah koreksi"],["Transformasi","1.200.000 kWh × 0,8 kgCO₂e per kWh ÷ 1.000 = 960 tCO₂e"],["Metode pengukuran","Faktor emisi 0,8 (hipotetis, perlu rujukan resmi)"],["Verifikasi","Akuntan, 19 Nov 2026"]],r:["kwh","tot"]},
+solar:{t:"Konsumsi solar",v:"80.000 liter",s:[["Sumber data","AIS dan sistem produksi"],["Waktu pengumpulan","Sinkronisasi 18 Nov 2026, 22.00"],["Transformasi","Tidak ada koreksi, kedua sumber sama"],["Metode pengukuran","Pencatatan pemakaian bahan bakar"],["Verifikasi","Otomatis sesuai (selisih 0%)"]],r:["e1"]},
+e1:{t:"Emisi solar, Scope 1",v:"216 tCO₂e",s:[["Sumber data","Konsumsi solar 80.000 liter"],["Waktu pengumpulan","Dihitung 19 Nov 2026"],["Transformasi","80.000 liter × 2,7 kgCO₂e per liter ÷ 1.000 = 216 tCO₂e"],["Metode pengukuran","Faktor emisi 2,7 (hipotetis, perlu rujukan resmi)"],["Verifikasi","Tim keberlanjutan, tinjau faktor emisi, status Dikerjakan"]],r:["solar","tot"]},
+tot:{t:"Total emisi Scope 1 dan 2",v:"1.176 tCO₂e",s:[["Sumber data","Emisi Scope 1 (216) dan Scope 2 (960)"],["Waktu pengumpulan","Konsolidasi 19 Nov 2026"],["Transformasi","216 + 960 = 1.176 tCO₂e"],["Metode pengukuran","Penjumlahan indikator fisik terverifikasi"],["Verifikasi","Sebelum koreksi nilainya 1.032, sekitar 12% lebih rendah"]],r:["e1","e2","int"]},
+int:{t:"Intensitas emisi",v:"29,4 kgCO₂e per ton",s:[["Sumber data","Total emisi 1.176 tCO₂e dan produksi 40.000 ton"],["Waktu pengumpulan","Produksi dari sistem produksi, 18 Nov 2026"],["Transformasi","1.176.000 kgCO₂e ÷ 40.000 ton = 29,4"],["Metode pengukuran","Intensitas per ton produk"],["Verifikasi","Mengikuti verifikasi total emisi"]],r:["tot"]}};
+const EK=["kwh","e2","solar","e1","tot","int"];
+const MI={beranda:0,rekon:1,flag:2,tugas:3,emisi:4,pspk:5,audit:6};
+function acc(id){const row=D.ak.find(a=>a[0]==role[0]);if(id in MI)return row[1][MI[id]];if(["lapor","indikator","banding"].includes(id)&&role[0]=="Operasional")return "–";return "✓"}
+const DENY=`<div class="card" style="max-width:560px"><h2>Menu ini tidak tersedia untuk peran Anda</h2><p class="note">Hak akses diatur per peran. Lihat matriks di menu Peran & akses.</p><button class="btn" onclick="go('beranda')">Kembali ke Beranda</button></div>`;
+function mine(){const m=D.tugas.filter(t=>t[1]==role[0]);return m.length?m.map(t=>`<div class="task"><div><b>${t[0]}</b><small>${t[2]}</small></div>${P(t[3],t[4])}</div>`).join(""):`<p class="note" style="margin:0">Tidak ada tugas untuk peran ${role[0]}. Anda dapat meninjau jejak audit dan laporan.</p>`}
+const $=i=>document.getElementById(i);
+const P=(t,k)=>`<span class="pill p${k[0]}">${t}</span>`;
+const TB=(h,r,nc=[])=>`<div class="scroll"><table><tr>${h.map((x,i)=>`<th class="${nc.includes(i)?'n':''}">${x}</th>`).join("")}</tr>${r.join("")}</table></div>`;
+const ring=(v,s=120)=>{const r=s/2-10,c=2*Math.PI*r;return `<svg class="ring" width="${s}" height="${s}" viewBox="0 0 ${s} ${s}" role="img" aria-label="Skor ${v} dari 100"><circle cx="${s/2}" cy="${s/2}" r="${r}" fill="none" stroke="var(--slate-bg)" stroke-width="12"/><circle cx="${s/2}" cy="${s/2}" r="${r}" fill="none" stroke="var(--green)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${c*v/100} ${c}" transform="rotate(-90 ${s/2} ${s/2})"/><text x="50%" y="53%" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif" font-weight="800" font-size="${s/3.4}" fill="var(--ink)">${v}</text></svg>`};
+const bars=(rows,max)=>rows.map(([l,a,b,c1,c2])=>`<div class="row"><span class="l">${l}</span><div class="t"><i style="width:${a/max*100}%;background:${c1}"></i></div><span class="v">${a.toLocaleString("id-ID")}</span></div><div class="row"><span class="l"></span><div class="t"><i style="width:${b/max*100}%;background:${c2}"></i></div><span class="v">${b.toLocaleString("id-ID")}</span></div>`).join("");
+const tasks=n=>D.tugas.slice(0,n).map(t=>`<div class="task"><div><b>${t[0]}</b><small>${t[1]}, ${t[2]}</small></div>${P(t[3],t[4])}</div>`).join("");
+const tl=(a,x)=>`<div class="tl">${a.map((s,i)=>`<div class="st ${i==a.length-1?'e':''}"><i></i><b>${x?(i+1)+". ":""}${s[0]||s}</b>${s[1]?`<span>${s[1]}</span>`:""}</div>`).join("")}</div>`;
+const V={};
+V.beranda=u=>`<div class="grid c4"><div class="card kpi"><h3>Data Quality Score</h3><div class="ringw">${ring(87,92)}<span>Gabungan tiga komponen di bawah</span></div></div><div class="card kpi hot"><h3>Flag perlu verifikasi</h3><b>1</b><span>dari 3 flag bulan ini</span></div><div class="card kpi ok tr" onclick="tr('tot')"><h3>Total emisi terverifikasi</h3><b>1.176</b><span>tCO₂e, Scope 1 dan 2</span><span class="hint2">Klik untuk telusuri asal angka</span></div><div class="card kpi"><h3>Data point dengan jejak audit</h3><b>86%</b><span>contoh nilai</span></div></div>
+<div class="card" style="margin-top:18px"><h2>Posisi data dalam pipeline</h2><div class="pipe">${D.steps.map((s,i)=>`<div class="${i==3?'w':''}">${s[0].split(" ").slice(0,2).join(" ")}<small>${i==3?"1 flag menunggu":"Berjalan"}</small></div>`).join("")}</div></div>
+<div class="grid cm" style="margin-top:18px"><div class="card"><h2>Tugas untuk Anda</h2>${mine()}<button class="btn gh" onclick="go('tugas')">Lihat semua tugas</button></div><div class="card"><h2>Rincian skor kualitas data</h2>${[["Kelengkapan",92,"var(--green)"],["Konsistensi",78,"var(--amber)"],["Status verifikasi",87,"var(--blue)"]].map(r=>`<div class="row"><span class="l">${r[0]}</span><div class="t"><i style="width:${r[1]}%;background:${r[2]}"></i></div><span class="v">${r[1]}</span></div>`).join("")}<div class="note">Skor ditinjau bersama rinciannya dan bukan satu-satunya dasar penilaian.</div></div></div>`;
+V.rekon=()=>`<div class="card"><h2>Selisih antar sumber data</h2>${TB(["Aktivitas","Utilitas","AIS","Sistem produksi","Selisih","Status"],D.rekon.map(r=>`<tr class="${r[6]=='a'?'hl cl':''}" ${r[6]=='a'?'onclick="go(\'flag\')"':''}><td>${r[0]}</td><td class="n">${r[1]}</td><td class="n">${r[2]}</td><td class="n">${r[3]}</td><td class="n"><b>${r[4]}</b></td><td>${P(r[5],r[6])}</td></tr>`),[1,2,3,4])}<div class="note">Selisih di atas ambang 5% otomatis menjadi flag. Klik baris kuning untuk membuka flag terkait.</div></div>`;
+V.flag=()=>`<div class="grid cm"><div>${D.flags.map((f,i)=>`<div class="flag ${i?'':'hot'}"><b>${f[1]}</b><span class="tag">${f[0]}</span>${f[2]?`<div class="v">${f[2]}</div>`:""}<div class="note" style="margin:4px 0 10px">${f[5]}</div>${P(f[3],f[4])}${i?"":`<div><button class="btn" ${acc("flag")=="✎"?"":"disabled"} onclick="document.getElementById('cat').focus()">Verifikasi sekarang</button><button class="btn gh" onclick="go('trace')">Lihat jejak</button></div>`}</div>`).join("")}</div>
+<div class="card" style="align-self:start"><h2>Keputusan verifikasi F-01</h2>${acc("flag")=="✎"?"":`<div class="ro">Peran ${role[0]} hanya dapat melihat flag, tidak dapat mengambil keputusan.</div>`}<p class="note" style="margin:0 0 10px">Keputusan diambil manusia dan wajib disertai catatan.</p>${["Terverifikasi","Dikoreksi","Perlu data tambahan"].map(p=>`<button class="btn gh" data-p="${p}" ${acc("flag")=="✎"?"":"disabled"}>${p}</button>`).join("")}<textarea id="cat" rows="4" class="in" ${acc("flag")=="✎"?"":"disabled"} style="margin-top:14px" placeholder="Tulis catatan verifikasi…"></textarea><div class="note" id="hasil"></div></div></div>`;
+V.tugas=()=>`<div class="card"><h2>Tugas dan umpan balik ke unit sumber</h2>${tasks(3)}<div class="note">Temuan dikembalikan ke unit yang mencatat data, agar pencatatan di sumber diperbaiki.</div></div>`;
+V.trace=()=>`<div class="card" style="max-width:720px"><h3>Scope 2: emisi listrik</h3><h2 style="font-size:44px;color:var(--brand)">960 tCO₂e</h2>${tl(D.trace)}<div class="note">Telusuri angka lain:</div>${Object.keys(TR).map(k=>`<button class="btn gh" onclick="tr('${k}')">${TR[k].t}</button>`).join("")}</div>`;
+V.emisi=()=>`<div class="grid c2"><div class="card"><h2>Sebelum dan sesudah verifikasi</h2>${TB(["Indikator","Sebelum","Sesudah"],D.emisi.map((r,i)=>`<tr><td>${r[3]?"<b>"+r[0]+"</b>":r[0]}</td><td class="n">${r[1]}</td><td class="n"><button class="lk" onclick="tr('${EK[i]}')" aria-label="Telusuri ${r[0]}">${r[2]}</button></td></tr>`),[1,2])}<div class="note">Klik angka di kolom Sesudah untuk menelusuri asalnya. Produksi 40.000 ton per tahun. Data ilustratif.</div></div><div class="grid" style="align-content:start"><div class="card"><h2>Faktor emisi</h2>${TB(["Jenis","Faktor","Sumber"],[["Listrik","0,8 kgCO₂e per kWh"],["Solar","2,7 kgCO₂e per liter"]].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>Hipotetis, perlu rujukan resmi</td></tr>`))}</div><div class="card"><h2>Biaya lingkungan</h2>${TB(["Jenis","Nilai","Klasifikasi"],[["Biaya pengolahan limbah","Rp450 juta","Biaya lingkungan"],["Kewajiban lingkungan","Belum dinilai","Penilaian provisi (PSAK 57)"]].map(r=>`<tr><td>${r[0]}</td><td class="n">${r[1]}</td><td>${r[2]}</td></tr>`),[1])}</div></div></div>`;
+V.pspk=()=>`<div class="card"><h2>Kelengkapan unsur PSPK 1 dan 2</h2>${TB(["Unsur","Peran AIRE","Kesiapan","Status"],D.pspk.map(p=>`<tr><td><b>${p[0]}</b></td><td>${p[1]}</td><td style="width:160px"><div class="row" style="margin:0"><div class="t"><i style="width:${p[4]}%;background:var(--${p[3]=='g'?'green':p[3]=='a'?'amber':'slate'})"></i></div></div></td><td>${P(p[2],p[3])}</td></tr>`))}<div class="note">Status contoh. Pemetaan perlu disesuaikan dengan paragraf standar saat implementasi.</div><button class="btn" ${acc("pspk")=="✎"?"":"disabled"} onclick="toast('Draf laporan disiapkan (simulasi prototipe)')">Ekspor draf laporan</button>${acc("pspk")=="✎"?"":`<div class="note">Hanya tim keberlanjutan yang dapat mengekspor draf.</div>`}</div>`;
+V.indikator=()=>`<div class="grid c2">${D.ind.map(g=>`<div class="card"><h2>${g[0]}</h2>${g[1].map(i=>`<div class="task"><span>${i[0]}</span><b>${i[1]}</b></div>`).join("")}</div>`).join("")}</div><div class="note">Seluruh angka pada halaman ini adalah contoh.</div>`;
+V.banding=()=>`<div class="card"><h2>Hasil paralel pada bulan ke-4</h2>${[["Total emisi Scope 1 dan 2 (tCO₂e)",1032,1176],["Listrik tercatat (ribu kWh)",1020,1200]].map(b=>`<h3 style="margin-top:16px;color:var(--ink)">${b[0]}</h3>${bars([["Proses lama",b[1],b[2],"var(--slate)","var(--green)"]].map(r=>r),1300).replace('<span class="l"></span>','<span class="l">AIRE</span>')}`).join("")}<div class="note">Proses lama meremehkan emisi sekitar 12% dari nilai terverifikasi.</div></div>`;
+V.sumber=()=>`<div class="card"><h2>Koneksi sumber data</h2>${TB(["Sumber","Status","Sinkronisasi terakhir"],D.sumber.map(s=>`<tr><td><b>${s[0]}</b></td><td>${P(s[1],s[2])}</td><td>${s[3]}</td></tr>`))}</div>`;
+V.ai=()=>`<div class="grid cm"><div class="card"><h2>Mengapa flag F-01 muncul?</h2><p>Nilai di catatan utilitas dan AIS berbeda 15%. Pola ini mirip kasus tagihan yang belum diinput.</p><div class="note">Tingkat keyakinan: tinggi (contoh 0,92)</div><div class="note">Versi model: v1.0 (contoh)</div><div class="note">Pengawasan: 10% sampel flag ditinjau tiap bulan (contoh)</div></div><div class="card"><h2>Alur keputusan</h2>${tl(["AI menandai selisih","Akuntan memeriksa sumber","Keputusan dicatat manusia","Koreksi masuk jejak audit"],1)}</div></div>`;
+V.audit=()=>`<div class="card"><h2>Jejak audit</h2>${TB(["Waktu","Pengguna","Aksi","Objek"],D.audit.map(a=>`<tr>${a.map(x=>`<td>${x}</td>`).join("")}</tr>`))}</div>`;
+V.akses=()=>`<div class="card"><h2>Matriks peran</h2>${TB(["Peran",...D.rl],D.ak.map(a=>`<tr class="${a[0]==role[0]?'hl':''}"><td><b>${a[0]}${a[0]==role[0]?" (Anda)":""}</b></td>${[...a[1]].map(c=>`<td class="n">${c}</td>`).join("")}</tr>`),[1,2,3,4,5,6,7])}<div class="note">✓ lihat · ✎ ubah · – tidak ada akses</div></div>`;
+V.lapor=()=>{const c=2*Math.PI*54,s2=960/1176;return `<div class="rep"><div class="rep-hd"><div><h2>Laporan emisi dan kualitas informasi, Q3 2026</h2><p>Perusahaan manufaktur hipotetis, dua pabrik. Seluruh angka ilustratif.</p></div><div><button class="btn" id="fs">Layar penuh</button><button class="btn gh" onclick="print()">Cetak atau simpan PDF</button></div></div>
+<div class="grid c4"><div class="card kpi ok tr" onclick="tr('tot')"><h3>Total emisi Scope 1 dan 2</h3><b>1.176</b><span>tCO₂e, setelah verifikasi</span><span class="hint2">Klik untuk telusuri asal angka</span></div><div class="card kpi hot"><h3>Koreksi dari data awal</h3><b>+144</b><span>tCO₂e (12% lebih rendah sebelum AIRE)</span></div><div class="card kpi tr" onclick="tr('int')"><h3>Intensitas emisi</h3><b>29,4</b><span>kgCO₂e per ton produk</span><span class="hint2">Klik untuk telusuri asal angka</span></div><div class="card kpi"><h3>Biaya pengolahan limbah</h3><b>Rp450 jt</b><span>diklasifikasi biaya lingkungan</span></div></div>
+<div class="grid c3w c3" style="margin-top:18px;grid-template-columns:1.4fr 1fr 1fr"><div class="card"><h2>Emisi sebelum dan sesudah verifikasi</h2>${bars([["Scope 1",216,216,"var(--slate)","var(--green)"],["Scope 2",816,960,"var(--slate)","var(--green)"],["Total",1032,1176,"var(--slate)","var(--green)"]],1200)}<div class="legend"><span><i style="background:var(--slate)"></i>Sebelum</span><span><i style="background:var(--green)"></i>Sesudah (tCO₂e)</span></div></div>
+<div class="card"><h2>Komposisi emisi</h2><div class="ringw"><svg width="140" height="140" viewBox="0 0 140 140" role="img" aria-label="Scope 2 82 persen, Scope 1 18 persen"><circle cx="70" cy="70" r="54" fill="none" stroke="var(--amber)" stroke-width="20"/><circle cx="70" cy="70" r="54" fill="none" stroke="var(--green)" stroke-width="20" stroke-dasharray="${c*s2} ${c}" transform="rotate(-90 70 70)"/></svg><div><div><b style="color:var(--green)">82%</b> Scope 2<br><small class="note">Listrik, 960 tCO₂e</small></div><div style="margin-top:10px"><b style="color:var(--amber)">18%</b> Scope 1<br><small class="note">Solar, 216 tCO₂e</small></div></div></div></div>
+<div class="card"><h2>Kualitas data</h2><div class="ringw">${ring(87,110)}<span class="note" style="margin:0">Kelengkapan 92, konsistensi 78, verifikasi 87</span></div></div></div>
+<div class="grid c2" style="margin-top:18px"><div class="card"><h2>Kesiapan unsur PSPK 1 dan 2</h2>${D.pspk.map(p=>`<div class="row"><span class="l" style="width:150px">${p[0]}</span><div class="t"><i style="width:${p[4]}%;background:var(--${p[3]=='g'?'green':p[3]=='a'?'amber':'slate'})"></i></div><span class="v">${p[2]}</span></div>`).join("")}</div>
+<div class="card"><h2>Perjalanan angka listrik (Scope 2)</h2><div class="pipe">${D.trace.map(t=>`<div>${t[0]}</div>`).join("")}</div><div class="note">Selisih 180.000 kWh (15%) ditandai AI, ditelusuri akuntan, dikoreksi, dan tercatat di jejak audit.</div></div></div></div>`};
+/* nav */
+const ALL=D.menu.flatMap(g=>g[1]);let authed=false,role=D.roles[0];
+function login(){$("login").innerHTML=`<section class="hero"><div class="logo"><i>A</i>AIRE</div><div><h2>From Scattered Data to Verified Disclosure</h2><p>Platform yang menghubungkan data lingkungan, akuntansi, verifikasi manusia, dan laporan keberlanjutan dalam satu jejak audit.</p></div><div class="chain">${D.steps.map(s=>`<div><span>${s[0]}<small>${s[1]}</small></span></div>`).join("")}</div></section>
+<section class="formwrap"><div class="form"><h1>Masuk ke AIRE</h1><p class="sub">Pilih peran Anda untuk melihat tampilan yang sesuai.</p><span class="lab">Peran</span><div class="chips">${D.roles.map((r,i)=>`<button class="chip ${i?'':'on'}" data-r="${i}">${r[0]}</button>`).join("")}</div><label class="lab" for="em">Email kantor</label><input class="in" id="em" type="email" placeholder="nama@perusahaan.co.id"><label class="lab" for="pw">Kata sandi</label><input class="in" id="pw" type="password" placeholder="••••••••"><button class="btn go" id="gb">Masuk</button><p class="hint">Prototipe: tidak perlu mengisi email dan kata sandi. Klik Masuk untuk melanjutkan.</p></div></section>`;
+$("login").onclick=e=>{const c=e.target.closest(".chip");if(c){role=D.roles[c.dataset.r];document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x==c))}if(e.target.id=="gb"){authed=true;go("beranda")}}}
+function go(id){location.hash=id}
+function closeTr(){document.querySelectorAll(".ov,.dr").forEach(e=>e.remove())}
+function tr(k){closeTr();const d=TR[k],o=document.createElement("div");o.className="ov";o.onclick=closeTr;const a=document.createElement("aside");a.className="dr";a.setAttribute("role","dialog");a.setAttribute("aria-label","Jejak "+d.t);
+a.innerHTML=`<button class="x" aria-label="Tutup">✕</button><h3 style="font-family:var(--bd);color:var(--mut);font-size:13.5px">Traceability trail</h3><h2 style="font-size:20px">${d.t}</h2><div class="big">${d.v}</div>${P("Terverifikasi","g")}${tl(d.s.map(x=>[x[0],x[1]]))}<div class="note">Terkait angka lain:</div>${d.r.map(x=>`<button class="btn gh" data-k="${x}">${TR[x].t}</button>`).join("")}<div><button class="btn" data-a="1">Buka jejak audit</button></div>`;
+a.querySelector(".x").onclick=closeTr;a.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>tr(b.dataset.k));a.querySelector("[data-a]").onclick=()=>{closeTr();go("audit")};
+document.body.append(o,a);a.querySelector(".x").focus()}
+addEventListener("keydown",e=>{if(e.key=="Escape")closeTr()});
+function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,2600)}
+function route(){const id=location.hash.slice(1)||"beranda";if(!authed||id=="login"){$("login").hidden=false;$("app").hidden=true;if(!authed)return}
+$("login").hidden=true;$("app").hidden=false;const it=ALL.find(x=>x[0]==id)||ALL[0];
+$("side").innerHTML=`<div class="logo"><i>A</i>AIRE</div>`+D.menu.map(g=>`<div class="grp">${g[0]}</div>`+g[1].filter(i=>acc(i[0])!="–").map(i=>`<button class="nav ${i[0]==it[0]?'on':''}" data-v="${i[0]}">${i[1]}${i[3]?'<span class="new">Baru</span>':''}</button>`).join("")).join("")+`<div class="sfoot">Data ilustratif, prototipe</div>`;
+const ok=acc(it[0])!="–";$("ttl").textContent=it[1];$("sub").textContent=ok?it[2]+" (peran "+role[0]+": "+(acc(it[0])=="✎"?"dapat mengubah":"hanya melihat")+")":"Akses dibatasi";$("av").textContent=role[1];$("av").title="Keluar ("+role[0]+")";
+$("pg").innerHTML=`<div class="page ${it[0]=='lapor'?'wide':''}">${ok?V[it[0]]():DENY}</div>`;$("side").classList.remove("open");scrollTo(0,0);
+if(it[0]=="flag"&&ok)document.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{const c=$("cat").value.trim();document.querySelectorAll("[data-p]").forEach(x=>x.classList.toggle("on",x==b));$("hasil").textContent=c?`Keputusan “${b.dataset.p}” dicatat dengan catatan: ${c}`:"Isi catatan verifikasi terlebih dahulu."});
+if(it[0]=="lapor"&&ok)$("fs").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen().catch(()=>toast("Layar penuh tidak tersedia di tampilan ini"))}
+document.addEventListener("click",e=>{const n=e.target.closest(".nav");if(n)go(n.dataset.v)});
+$("bg").onclick=()=>$("side").classList.toggle("open");
+$("av").onclick=()=>{authed=false;location.hash="login";login()};
+addEventListener("hashchange",route);login();route();
+</script></body></html>
